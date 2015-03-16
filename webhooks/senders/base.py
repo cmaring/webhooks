@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import json
 import logging
 import sys
+import os
 from time import sleep
 
 from cached_property import cached_property
@@ -65,6 +66,15 @@ class Senderable(object):
     def notify(self, message):
         logging.debug(message)
 
+    def get_headers(self):
+        """
+        Set Authorization if set in environment variable.
+        """
+        headers = {}
+        if os.environ.get('Authorization', None):
+            headers['Authorization'] = os.environ.get('Authorization', None)
+        return headers
+
     def send(self):
         """ Wrapper around _send method for use with asynchronous coding. """
         return self._send()
@@ -82,7 +92,9 @@ class Senderable(object):
             payload['attempt'] = self.attempt
 
             # post the payload
-            self.response = requests.post(self.url, json=self.payload)
+            self.response = requests.post(self.url,
+                                          json=self.payload,
+                                          headers=self.get_headers())
             if sys.version > '3':
                 # Converts bytes object to str object in Python 3+
                 self.response_content = self.response.content.decode('utf-8')
