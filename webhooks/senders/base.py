@@ -85,7 +85,7 @@ class Senderable(object):
             payload['attempt'] = self.attempt
 
             # post the payload
-            self.response = requests.post(self.url, self.payload)
+            self.response = requests.post(self.url, json=self.payload)
             if sys.version > '3':
                 # Converts bytes object to str object in Python 3+
                 self.response_content = self.response.content.decode('utf-8')
