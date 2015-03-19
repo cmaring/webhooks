@@ -71,8 +71,8 @@ class Senderable(object):
         Set Authorization if set in environment variable.
         """
         headers = {}
-        if os.environ.get('Authorization', None):
-            headers['Authorization'] = os.environ.get('Authorization', None)
+        if os.environ.get('GATEWAY_TOKEN'):
+            headers['Authorization'] = "Token %s" % os.environ.get('GATEWAY_TOKEN')
         return headers
 
     def send(self):
